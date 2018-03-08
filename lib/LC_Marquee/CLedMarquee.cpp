@@ -15,24 +15,19 @@ void CLedMarquee::SetLedMarquee(ELedMarquee marquee)
             TestAllLeds();
             break;
         case Array:
-// Set on 2 of the layers
-for(int i = 0; i < 4; i += 2)
-{
-    m_leds->SetLedsLayerOnOff(i, true);
-    Common.Sleep(SLEEP_60MS);
-}
-Common.Sleep(SLEEP_250MS);
-for(int i = 1; i < 4; i += 2)
-{
-    m_leds->SetLedsLayerOnOff(i, true);
-    Common.Sleep(SLEEP_60MS);
-}
-Common.Sleep(SLEEP_1S);
-m_leds->AllLedsOnOff(false);
 
             break;
         case Mosaic:
-    
+            for (int i = 0; i < m_leds->GetDimensions(); i++)
+            {
+                m_leds->SetLedOnOff(0, i, 0, true);
+                Common.Sleep(SLEEP_60MS);
+            }
+            for (int i = 0; i <= m_leds->GetDimensions(); i++)
+            {
+                m_leds->SetLedOnOff(i, i, 0, true);
+                Common.Sleep(SLEEP_60MS);
+            }
             break;
         default:
             break;
@@ -45,8 +40,10 @@ m_leds->AllLedsOnOff(false);
 
 void CLedMarquee::TestAllLeds()
 {
-
-
+    m_leds->AllLedsOnOff(true);
+    Common.Sleep(SLEEP_250MS);
+    m_leds->AllLedsOnOff(false);
+    Common.Sleep(SLEEP_250MS);
 }
 
 #pragma endregion

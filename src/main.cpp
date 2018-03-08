@@ -1,25 +1,29 @@
 #include <main.h>
 
 #ifdef CUBE_3x3x3
-const byte DIMENSIONS 3;
-#elseif CUBE_4x4x4
-const byte DIMENSIONS 4;
+const byte DIMENSIONS = 3;
+#endif
+#ifdef CUBE_4x4x4
+const byte DIMENSIONS = 4;
 #endif
 
 CLedMarquee* m_leds;
 
 void setup()
 {
-    m_leds = new CLedMarquee(4);
+    m_leds = new CLedMarquee(DIMENSIONS);
 }
 
 void loop()
 {
     m_leds->SetLedMarquee(TestAll);
+    Common.Sleep(SLEEP_1S);
+    m_leds->SetLedMarquee(TestAll);
+    Common.Sleep(SLEEP_1S);
+
+    m_leds->SetLedMarquee(Mosaic);
     Common.Sleep(SLEEP_500MS);
-    m_leds->SetLedMarquee(Array);
-    Common.Sleep(SLEEP_500MS);
-    
+
     // // Second line, moving downward
     // ledON(xy[0][1],z[3]);
     // delay(100);
@@ -187,9 +191,4 @@ void loop()
     //         delay(100);
     //     }
     // }
-
-    // // Light up all LED and stay forever
-    // cubeClear();
-    // delay(500);
-    // cubeON();
 }
