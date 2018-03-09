@@ -6,6 +6,11 @@ const byte DIMENSIONS = 3;
 #ifdef CUBE_4x4x4
 const byte DIMENSIONS = 4;
 #endif
+#ifdef GAME
+#include <CLedGame.h>
+
+CLedGame* m_Game;
+#endif
 
 CLedMarquee* m_leds;
 
@@ -22,6 +27,9 @@ void loop()
     Common.Sleep(SLEEP_1S);
 
     m_leds->SetLedMarquee(Mosaic);
+    Common.Sleep(SLEEP_500MS);
+
+    m_leds->SetLedMarquee(Array);
     Common.Sleep(SLEEP_500MS);
 
     // // Second line, moving downward

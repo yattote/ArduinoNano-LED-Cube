@@ -22,39 +22,46 @@ public:
     // Constructors
     CLeds(int iDimensions)
     {
-        m_iDimensions = iDimensions;
-        m_xy = new byte*[iDimensions];      //init ROWS
-        for (i = 0 ; i < iDimensions; i++ ) //init COLUMNS
-            m_xy[i] = new byte[iDimensions];
-        m_z = new byte[iDimensions];
+        int i, j;
 
-        // Initialize and allocate pins 0 to 15
+        // initialize variables
+        m_iDimensions = iDimensions;
+        m_xy = new byte*[iDimensions];      
+        m_bLedsOnXY = new byte*[iDimensions];
+
+        // initialize and allocate pins 0 to 15
         byte pin = 0;
-        for(i = 0; i < m_iDimensions; i++)
+
+        for (i = 0; i < m_iDimensions; i++)     //init ROWS
         {
-            for(j = 0; j < m_iDimensions; j++)
+            m_xy[i] = new byte[iDimensions];
+            m_bLedsOnXY[i] = new byte[iDimensions];
+
+            for (j = 0; j < m_iDimensions; j++) //init COLUMNS
             {
                 m_xy[i][j] = pin++;  // Store and increment to next pin number and set pin as Output
                 pinMode(m_xy[i][j], OUTPUT);
+                m_xy[i][j] = 0;
             }
         }
 
-        // Allocate layers to array z, continue store pin starting from last XY-plane pin
+        // allocate layers to array z, continue store pin starting from last XY-plane pin
         pin = m_iDimensions * m_iDimensions;
-        for(i = 0; i < m_iDimensions; i++)
+        m_z = new byte[iDimensions];
+        m_bLedsOnZ = new byte[iDimensions];
+        for (i = 0; i < m_iDimensions; i++)
         {
             m_z[i] = pin++;
-            pinMode(m_z[i], OUTPUT);                // Store and increment to next pin number and set pin as Output
+            pinMode(m_z[i], OUTPUT);
+            m_bLedsOnZ[i] = 0;
         }
-        AllLedsOnOff(false);    // Clear cube
+        AllLedsOnOff(false);        // Clear cube
     };
 
     // Public methods
     void AllLedsOnOff(bool bLedsOn);
     void SetLedOnOff(int x, int y, int z, bool bLedOn);
-    void SetLedsRowOnOff(int x, int z, bool bLedsOn);
-    void SetLedsColOnOff(int y, int z, bool bLedsOn);
-    void SetLedsLayerOnOff(int z, bool bLedsOn);
+
 
     // Data accessors
 	int GetDimensions()
@@ -66,9 +73,8 @@ private:
     int m_iDimensions;
     byte** m_xy;    // array to store LED positions correspond to pin number
     byte*  m_z;     // array to store LED layers correspond to pin number
-    bool** m_bXY;
-    bool*  m_bZ;
-    int i, j, k;    // Indices
+    byte** m_bLedsOnXY; //leds on for each pin column
+    byte*  m_bLedsOnZ;  //leds on for each layer
 
     // Private methods
 };

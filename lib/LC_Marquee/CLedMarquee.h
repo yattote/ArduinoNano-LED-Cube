@@ -2,13 +2,13 @@
 #include <CLeds.h>
 #include <CCommon.h>
 
-enum ELedMarquee { TestAll, Array, Mosaic };
+enum ELedMarquee { TestAll, Array, Mosaic, LineVertical, LineHorizontal, LineDiagonal };
 
 class CLedMarquee
 {
 public:
     // Constructors
-    CLedMarquee(byte iDimensions)
+    CLedMarquee(int iDimensions)
     {
         m_iDimensions = iDimensions;
         m_leds = new CLeds(iDimensions);
@@ -20,9 +20,11 @@ public:
 
 private:
     // Fields
-    byte m_iDimensions;
+    int m_iDimensions;
     CLeds* m_leds;
 
     // Private methods
     void TestAllLeds();
+    void SetLedsXyPlaneOnOff(int x, int y);
+    void SetLedsLayerOnOff(int z);
 };
