@@ -31,7 +31,6 @@ public:
 
         // initialize and allocate pins 0 to 15
         byte pin = 0;
-
         for (i = 0; i < m_iDimensions; i++)     //init ROWS
         {
             m_xy[i] = new byte[iDimensions];
@@ -41,7 +40,7 @@ public:
             {
                 m_xy[i][j] = pin++;  // Store and increment to next pin number and set pin as Output
                 pinMode(m_xy[i][j], OUTPUT);
-                m_xy[i][j] = 0;
+                m_bLedsOnXY[i][j] = 0;
             }
         }
 
@@ -55,7 +54,9 @@ public:
             pinMode(m_z[i], OUTPUT);
             m_bLedsOnZ[i] = 0;
         }
-        AllLedsOnOff(false);        // Clear cube
+
+        // clear cube
+        AllLedsOnOff(false);
     };
 
     // Public methods
@@ -73,8 +74,8 @@ private:
     int m_iDimensions;
     byte** m_xy;    // array to store LED positions correspond to pin number
     byte*  m_z;     // array to store LED layers correspond to pin number
-    byte** m_bLedsOnXY; //leds on for each pin column
-    byte*  m_bLedsOnZ;  //leds on for each layer
+    byte** m_bLedsOnXY; //number of leds ON for each pin column
+    byte*  m_bLedsOnZ;  //number of leds ON for each layer
 
     // Private methods
 };
