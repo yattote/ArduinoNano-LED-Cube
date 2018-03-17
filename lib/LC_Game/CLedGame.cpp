@@ -18,7 +18,7 @@ void CLedGame::GenerateRandomVerticalLine()
     long rndX= random(0, m_iDimensions);
     long rndY= random(0, m_iDimensions);
 
-    m_ledMarquee->SetLedMarquee(Mosaic);
+    m_ledMarquee->SetLedMarquee(LineVertical);
 }
 
 void CLedGame::ReadJoystick()

@@ -62,7 +62,7 @@ public:
     // Public methods
     void AllLedsOnOff(bool bLedsOn);
     void SetLedOnOff(int x, int y, int z, bool bLedOn);
-
+    void SetPatternFromMem(unsigned char cPatternTable[]);
 
     // Data accessors
 	int GetDimensions()

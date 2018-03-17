@@ -2,7 +2,7 @@
 #include <CLeds.h>
 #include <CCommon.h>
 
-enum ELedMarquee { TestAll, LineVertical, LineHorizontal, LineRandom, Snake, Mosaic };
+enum ELedMarquee { TestAll, LineVertical, LineHorizontal, LineRandom, Snake, Pattern };
 
 class CLedMarquee
 {
@@ -38,4 +38,5 @@ private:
     void SetLedsLayerHorizontal(int x, int z, bool bLeftToRight);
     void SetSnake(int iIterations);
     void CalculateSnakeNextMove(int iIteration, int iValues[3], int iDimension, int iOrigDimension, bool bDirection);
+    void LoadPattern();
 };
