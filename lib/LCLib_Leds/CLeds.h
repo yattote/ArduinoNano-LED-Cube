@@ -1,26 +1,10 @@
 #include <Arduino.h>
 
-/* xy-plane, Pin allocation:
- -|-------------------------------
- 3| 12      13      14(A0)  15(A1)
- 2| 8       9       10      11
- 1| 4       5       6       7
- 0| 0       1       2       3
- -|-------------------------------
- * 
- * z-axis (layers), Pin allocation:
--|-------------
-3| 16(A2)
-2| 17(A3)
-1| 18(A4)
-0| 19(A5)
--|------------- */
-
 class CLeds
 {
 public:
     // Constructors
-    CLeds(int iDimensions)
+    CLeds(int iDimensions, int iPinsXY[], int iPinsZ[])
     {
         int i, j;
 
@@ -29,8 +13,7 @@ public:
         m_xy = new byte*[iDimensions];      
         m_bLedsOnXY = new byte*[iDimensions];
 
-        // initialize and allocate pins 0 to 15
-        byte pin = 0;
+        // initialize and allocate pins 0 to ([DIMENSIONS * 2] - 1)
         for (i = 0; i < m_iDimensions; i++)     //init ROWS
         {
             m_xy[i] = new byte[iDimensions];
@@ -38,19 +21,18 @@ public:
 
             for (j = 0; j < m_iDimensions; j++) //init COLUMNS
             {
-                m_xy[i][j] = pin++;  // Store and increment to next pin number and set pin as Output
+                m_xy[i][j] = iPinsXY[i * m_iDimensions + j];
                 pinMode(m_xy[i][j], OUTPUT);
                 m_bLedsOnXY[i][j] = 0;
             }
         }
 
         // allocate layers to array z, continue store pin starting from last XY-plane pin
-        pin = m_iDimensions * m_iDimensions;
         m_z = new byte[iDimensions];
         m_bLedsOnZ = new byte[iDimensions];
         for (i = 0; i < m_iDimensions; i++)
         {
-            m_z[i] = pin++;
+            m_z[i] = iPinsZ[i];
             pinMode(m_z[i], OUTPUT);
             m_bLedsOnZ[i] = 0;
         }

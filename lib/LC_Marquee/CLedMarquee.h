@@ -8,10 +8,10 @@ class CLedMarquee
 {
 public:
     // Constructors
-    CLedMarquee(int iDimensions)
+    CLedMarquee(int iDimensions, int iPinsXY[], int iPinsZ[])
     {
         m_iDimensions = iDimensions;
-        m_leds = new CLeds(iDimensions);
+        m_leds = new CLeds(iDimensions, iPinsXY, iPinsZ);
 
         m_iSpeed = 60;
     };

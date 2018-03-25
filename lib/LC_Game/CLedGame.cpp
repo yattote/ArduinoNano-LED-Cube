@@ -4,21 +4,20 @@
 
 void CLedGame::StartGame()
 {
-    // TODO: generate random vertical line
-    // read (X, Y) position Joystick
-    // check when led arrive bottom layer with position set with Joystick
+    // TODO: generate random pixel
+    // read (X, Y) position Joystick, and read button to change (Z) axis
 }
 
 #pragma endregion
 
 #pragma region Private methods
 
-void CLedGame::GenerateRandomVerticalLine()
+void CLedGame::GeneratePixel()
 {
-    long rndX= random(0, m_iDimensions);
-    long rndY= random(0, m_iDimensions);
+    long rndX = random(0, m_iDimensions);
+    long rndY = random(0, m_iDimensions);
+    long rndZ = random(0, m_iDimensions);
 
-    m_ledMarquee->SetLedMarquee(LineVertical);
 }
 
 void CLedGame::ReadJoystick()
