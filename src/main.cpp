@@ -3,9 +3,9 @@
 #ifdef DIM_3x3x3
 /* xy-plane, Pin allocation:
  -|-------------------
- 2| 6       7       8
- 1| 3       4       5
- 0| 0       1       2
+ 2| 12      11      10
+ 1| 9       8       7
+ 0| 6       5       4
  -|-------------------
  * z-axis (layers), Pin allocation:
 -|---------
@@ -15,7 +15,7 @@
 -|--------- */
 const byte DIMENSIONS = 3;
 const int PLANE_XY[9] = { 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-const int PLANE_Z[3] = { 16, 17, 18 };
+const int PLANE_Z[3] = { 14, 15, 16 };
 #elif DIM_4x4x4
 /* xy-plane, Pin allocation:
  -|-------------------------------
