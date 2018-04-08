@@ -6,35 +6,36 @@ public:
     // Constructors
     CLeds(int iDimensions, int iPinsXY[], int iPinsZ[])
     {
-        int i, j;
+        int i, j, k;
 
         // initialize variables
         m_iDimensions = iDimensions;
-        m_xy = new byte*[iDimensions];      
-        m_bLedsOnXY = new byte*[iDimensions];
+        m_pinXY = new byte*[iDimensions];      
+        m_pinZ = new byte[iDimensions];
+        m_ledStateXYZ = new bool**[iDimensions];      
 
-        // initialize and allocate pins 0 to ([DIMENSIONS * 2] - 1)
-        for (i = 0; i < m_iDimensions; i++)     //init ROWS
+        // process variables
+        for (i = 0; i < m_iDimensions; i++)     //init ROWS X
         {
-            m_xy[i] = new byte[iDimensions];
-            m_bLedsOnXY[i] = new byte[iDimensions];
+            m_pinXY[i] = new byte[iDimensions];
+            m_ledStateXYZ[i] = new bool*[iDimensions];
 
-            for (j = 0; j < m_iDimensions; j++) //init COLUMNS
+            for (j = 0; j < m_iDimensions; j++) //init COLUMNS Y
             {
-                m_xy[i][j] = iPinsXY[i * m_iDimensions + j];
-                pinMode(m_xy[i][j], OUTPUT);
-                m_bLedsOnXY[i][j] = 0;
-            }
-        }
+                // allocate pins to plane XY
+                m_pinXY[i][j] = iPinsXY[i * m_iDimensions + j];
+                pinMode(m_pinXY[i][j], OUTPUT);
 
-        // allocate layers to array z, continue store pin starting from last XY-plane pin
-        m_z = new byte[iDimensions];
-        m_bLedsOnZ = new byte[iDimensions];
-        for (i = 0; i < m_iDimensions; i++)
-        {
-            m_z[i] = iPinsZ[i];
-            pinMode(m_z[i], OUTPUT);
-            m_bLedsOnZ[i] = 0;
+                m_ledStateXYZ[i][j] = new bool[iDimensions];
+                for (k = 0; k < m_iDimensions; k++)     //init PLANE Z
+                {
+                    m_ledStateXYZ[i][j][k] = false;
+                }
+            }
+
+            // allocate pins to plane Z
+            m_pinZ[i] = iPinsZ[i];
+            pinMode(m_pinZ[i], OUTPUT);
         }
 
         // clear cube
@@ -54,10 +55,9 @@ public:
 private:
     // Fields
     int m_iDimensions;
-    byte** m_xy;    // array to store LED positions correspond to pin number
-    byte*  m_z;     // array to store LED layers correspond to pin number
-    byte** m_bLedsOnXY; //number of leds ON for each pin column
-    byte*  m_bLedsOnZ;  //number of leds ON for each layer
+    byte** m_pinXY;    // array to store LED positions correspond to pin number
+    byte*  m_pinZ;     // array to store LED layers correspond to pin number
+    bool*** m_ledStateXYZ;  // array to store each LED status (ON/OFF) corresponding to plane XYZ
 
     // Private methods
 };

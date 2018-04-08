@@ -11,47 +11,60 @@ void CLeds::AllLedsOnOff(bool bLedsOn)
     {
         for (int j = 0; j < m_iDimensions; j++)
         {
-            digitalWrite(m_xy[i][j], bLedsOn);  // position pin to HIGH if switch on and LOW if switch off
+            digitalWrite(m_pinXY[i][j], bLedsOn);  // position pin to HIGH if switch ON and LOW if switch OFF
         }
-        digitalWrite(m_z[i], !bLedsOn);         // layer pin to LOW if switch on and HIGH if switch off
+        digitalWrite(m_pinZ[i], !bLedsOn);         // layer pin to LOW if switch ON and HIGH if switch OFF
     }
 }
 
-void CLeds::SetLedOnOff(int x, int y, int z,  bool bLedOn)
+void CLeds::SetLedOnOff(int x, int y, int z, bool bLedOn)
 {
-    // Set the desired LED position pin to HIGH if switch on and LOW if switch off
-    // Set the desired LED layer pin to LOW if switch on and HIGH if switch off
+    int iCountXY, iCountZ;
+
+    //set new led status only if there is a change in this led
+    if (m_ledStateXYZ[x][y][z] == bLedOn)
+        return;
+    else
+        m_ledStateXYZ[x][y][z] = bLedOn;
+
+    //count leds in columnn XY in ON state
+    iCountXY = iCountZ = 0;
+    for (int k = 0; k < m_iDimensions; k++)
+    {
+        if (m_ledStateXYZ[x][y][k])
+            iCountXY++;
+    }
+
+    //count leds in plane Z in ON state
+    for (int i = 0; i < m_iDimensions; i++)
+    {
+        for (int j = 0; j < m_iDimensions; j++)
+        {
+            if (m_ledStateXYZ[i][j][z])
+                iCountZ++;
+        }
+    }
+
+    //set corresponding pin status to switch ON/OFF the led
     if (bLedOn)
     {
-        // if no led in that column is ON, then switch ON
-        if (m_bLedsOnXY[x][y] == 0 && digitalRead(m_xy[x][y]) == LOW)
-        {
-            digitalWrite(m_xy[x][y], HIGH);
-        }
-        m_bLedsOnXY[x][y]++;
+        // all leds in column XY are OFF -> switch ON column XY
+        if (iCountXY <= 1)
+            digitalWrite(m_pinXY[x][y], HIGH);
 
-        // if no led in that layer is ON, then switch ON
-        if (m_bLedsOnZ[z] == 0 && digitalRead(m_z[z]) == HIGH)
-        {
-            digitalWrite(m_z[z], LOW);
-        }
-        m_bLedsOnZ[z]++;    //TODO: the control with array won't work if the same led is called twice
+        // all leds in plane Z are OFF -> switch ON plane Z
+        if (iCountZ <= 1)
+            digitalWrite(m_pinZ[z], LOW);
     }
     else
     {
-        m_bLedsOnXY[x][y]--;
-        // if all leds in that column is OFF, then switch OFF
-        if (m_bLedsOnXY[x][y] == 0 && digitalRead(m_xy[x][y]) == HIGH)
-        {
-            digitalWrite(m_xy[x][y], LOW);
-        }
+        // all leds in column XY are OFF -> switch OFF column XY
+        if (iCountXY == 0)
+            digitalWrite(m_pinXY[x][y], LOW);
 
-        m_bLedsOnZ[z]--;
-        // if all leds in that layer is OFF, then switch OFF
-        if (m_bLedsOnZ[z] == 0 && digitalRead(m_z[z]) == LOW)
-        {
-            digitalWrite(m_z[z], HIGH);
-        }
+        // all leds in plane Z are OFF -> switch OFF plane Z
+        if (iCountZ == 0)
+            digitalWrite(m_pinZ[z], HIGH);
     }
 }
 
@@ -89,11 +102,11 @@ void CLeds::SetPatternFromMem(unsigned char cPatternTable[])
             {
                 if (k == 0)     // turn previous plane off
                 {
-                    digitalWrite(m_z[m_iDimensions - 1], LOW);
+                    digitalWrite(m_pinZ[m_iDimensions - 1], LOW);
                 }
                 else
                 {
-                    digitalWrite(m_z[k - 1], LOW);
+                    digitalWrite(m_pinZ[k - 1], LOW);
                 }
 
                 // load current plane pattern data into ports
@@ -101,11 +114,11 @@ void CLeds::SetPatternFromMem(unsigned char cPatternTable[])
                 {
                     for (int j = 0; j < m_iDimensions; j++)
                     {
-                        digitalWrite(m_xy[i][j], PatternBuf[iPatternBufIdx] & (1 << j));
+                        digitalWrite(m_pinXY[i][j], PatternBuf[iPatternBufIdx] & (1 << j));
                     }
                     iPatternBufIdx++;
                 }
-                digitalWrite(m_z[k], HIGH); // turn current plane on
+                digitalWrite(m_pinZ[k], HIGH); // turn current plane on
                 
                 // delay PLANETIME us (2000us -> 2ms)
                 delayMicroseconds(PLANETIME);
