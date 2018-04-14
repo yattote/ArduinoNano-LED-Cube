@@ -12,6 +12,10 @@ void CLeds::AllLedsOnOff(bool bLedsOn)
         for (int j = 0; j < m_iDimensions; j++)
         {
             digitalWrite(m_pinXY[i][j], bLedsOn);  // position pin to HIGH if switch ON and LOW if switch OFF
+            for (int k = 0; k < m_iDimensions; k++)// reset also control array
+            {
+                m_ledStateXYZ[i][j][k] = false;
+            }
         }
         digitalWrite(m_pinZ[i], !bLedsOn);         // layer pin to LOW if switch ON and HIGH if switch OFF
     }
