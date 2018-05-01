@@ -89,9 +89,9 @@ void CLedGame::MoveAndCheckLed()
     {
         //blink led to confirm led
         m_leds->SetLedOnOff(m_iX, m_iY, m_iZ, true);
-        delay(1000);
+        delay(500);
         m_leds->SetLedOnOff(m_iX, m_iY, m_iZ, false);
-        delay(1000);
+        delay(500);
         m_leds->SetLedOnOff(m_iX, m_iY, m_iZ, true);
         delay(250);
 
@@ -105,11 +105,12 @@ void CLedGame::MoveAndCheckLed()
     }
 
     // if user has complete sequence of Simon's level -> change GameMode flag and reset other variables
-    if (m_iCurrentLevel == m_iMaxLevel - 1)//TODO: check user ans Simon levels
+    if (m_iCurrentLevel >= m_iMaxLevel)
     {
         m_leds->AllLedsOnOff(true);
         delay(1000);
         m_leds->AllLedsOnOff(false);
+        delay(250);
         m_GameMode = Simon;
         m_iCurrentLevel = 0;
     }
@@ -117,19 +118,34 @@ void CLedGame::MoveAndCheckLed()
 
 void CLedGame::SimonLed()
 {
-    // add new led level by looping to make sure is different led than the previous level
-    while (m_iMaxLevel > 0 &&
-           m_iSimonX[m_iMaxLevel] == m_iSimonX[m_iMaxLevel - 1] &&
-           m_iSimonY[m_iMaxLevel] == m_iSimonY[m_iMaxLevel - 1] &&
-           m_iSimonZ[m_iMaxLevel] == m_iSimonZ[m_iMaxLevel - 1])
+    //check Max Level before everything to reset all if needed
+    if (m_iMaxLevel >= MAX_SIMON_LEVELS)
+        m_iMaxLevel = 0;
+
+    // add new led level
+    bool bCorrectLevel = false;
+    while (!bCorrectLevel)
     {
+        //TODO: check why the first random() values are the same after reset Arduino. Only works when game is reset by (m_iMaxLevel >= MAX_SIMON_LEVELS)
         m_iSimonX[m_iMaxLevel] = random(0, m_iDimensions);
         m_iSimonY[m_iMaxLevel] = random(0, m_iDimensions);
         m_iSimonZ[m_iMaxLevel] = random(0, m_iDimensions);
+
+        //loop to make sure current level is different led than previous level
+        if (m_iMaxLevel <= 0)
+            bCorrectLevel = true;
+        else if (m_iSimonX[m_iMaxLevel] != m_iSimonX[m_iMaxLevel - 1] &&
+                 m_iSimonY[m_iMaxLevel] != m_iSimonY[m_iMaxLevel - 1] &&
+                 m_iSimonZ[m_iMaxLevel] != m_iSimonZ[m_iMaxLevel - 1])
+        {
+            bCorrectLevel = true;
+        }
     }
+    m_iMaxLevel++;  //increase and adapt Max Level
 
     // show all sequence with previous led and current new led
-    for (int i = 0; i <= m_iMaxLevel; i++)
+    //TODO: increase speed acording to current level
+    for (int i = 0; i < m_iMaxLevel; i++)
     {
         m_leds->SetLedOnOff(m_iSimonX[i], m_iSimonY[i], m_iSimonZ[i], true);
         delay(500);
@@ -137,19 +153,20 @@ void CLedGame::SimonLed()
         delay(500);    //after blink, wait for the next led in the sequence
     }
 
-    // change current level and change to user mode by blinking all
+    // change current level and change to user mode by blinking all leds
     m_GameMode = User;
-    m_iMaxLevel++;
-    if (m_iMaxLevel >= MAX_SIMON_LEVELS)
-    {
-        m_iMaxLevel = 0;
-    }
     m_leds->AllLedsOnOff(true);
     delay(1000);
     m_leds->AllLedsOnOff(false);
     delay(250);
 
-    // set also starting led for player
+    // set starting led for player from its last position, which has to be different to the first level led!
+    while (m_iSimonX[0] == m_iX && m_iSimonY[0] == m_iY && m_iSimonZ[0] == m_iZ)
+    {
+        m_iX = random(0, m_iDimensions);
+        m_iY = random(0, m_iDimensions);
+        m_iZ = random(0, m_iDimensions);
+    }
     m_leds->SetLedOnOff(m_iX, m_iY, m_iZ, true);
     delay(250);
 }
@@ -159,7 +176,6 @@ void CLedGame::GenerateLed()
     /* PROBLEM -> common positive for columns and common grounds for same plane Z makes impossible to keep only two leds in different planes ON. Imagine following situation:
         - led (0, 0, 0) and led (0, 1, 1) are ON. You can think there should be only 2 leds ON but there are four:
         - led (0, 0, 0) , led (0, 1, 1), led (0, 1, 0), led (0, 1, 0) are ON as the two colums (0, 0) and (0, 1) and planes Z (0) and (1) are ON
-       ALTERNATIVE -> make interactive only the last plane, and make chased led appear in the other m_iDimensions - 1 planes
     */
     /*if (millis() - m_lTimeLedOn >= TIME_TO_CHANGE_LED)
     {

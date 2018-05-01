@@ -7,7 +7,7 @@ const int IN_AXIS_X = 17;   //A3
 const int IN_AXIS_Y = 18;   //A4
 const int IN_BUTTON = 2;
 const unsigned long TIME_TO_POWER_DOWN = 60000;     //1 minute
-const int MAX_SIMON_LEVELS = 10;
+const int MAX_SIMON_LEVELS = 8;
 
 enum EGameMode { Unknown, Simon, User };
 
@@ -25,9 +25,6 @@ public:
         m_iSimonY = new int[MAX_SIMON_LEVELS];
         m_iSimonZ = new int[MAX_SIMON_LEVELS];
         m_iMaxLevel = 0;
-        m_iSimonX[m_iMaxLevel] = random(0, m_iDimensions);
-        m_iSimonY[m_iMaxLevel] = random(0, m_iDimensions);
-        m_iSimonZ[m_iMaxLevel] = random(0, m_iDimensions);
 
         // set initial (X, Y, Z) coordinates for user led
         m_joystick = new CJoystick(IN_AXIS_X, IN_AXIS_Y, IN_BUTTON);
@@ -56,9 +53,9 @@ private:
     int* m_iSimonX;
     int* m_iSimonY;
     int* m_iSimonZ;             //list of generated LEDs for Simon game
-    int m_iMaxLevel;            //max num. of leds for user to guess to determine if user has cleared current Simon level
+    int m_iMaxLevel;            //max num. of leds for user to guess that sets if user has cleared current Simon level
     CJoystick* m_joystick;
-    int m_iX, m_iY, m_iZ;       //current manual controlled LED
+    int m_iX, m_iY, m_iZ;       //current joystick controlled LED
     EDirection m_lastDirectionX, m_lastDirectionY;
     int m_iButtonZ;
     int m_iCurrentLevel;        //current led for user to guess
