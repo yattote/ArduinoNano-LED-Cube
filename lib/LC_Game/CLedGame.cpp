@@ -4,14 +4,14 @@
 
 void CLedGame::StartGame()
 {
-    if (m_GameMode == User)
+    if (m_GameMode == EGameMode::User)
     {
         // read (X, Y) position Joystick, and read button to change (Z) axis
         ReadJoystick();
 
         // move LED only if Joystick has moved
-        if (m_joystick->GetDirectionX() != None ||
-            m_joystick->GetDirectionY() != None ||
+        if (m_joystick->GetDirectionX() != EDirection::None ||
+            m_joystick->GetDirectionY() != EDirection::None ||
             m_iButtonZ == LOW)
         {
             //reset count to PowerDown
@@ -27,7 +27,7 @@ void CLedGame::StartGame()
         if (millis() - m_lLastTime >= TIME_TO_POWER_DOWN)
         {
             digitalWrite(LED_BUILTIN, HIGH);
-            Common.PowerDown2();
+            Common.PowerDownInt0();
             digitalWrite(LED_BUILTIN, LOW);
         }
     }
@@ -62,16 +62,28 @@ void CLedGame::MoveAndCheckLed()
     //switch off previous led
     m_leds->SetLedOnOff(m_iX, m_iY, m_iZ, false);
 
-    //check axis X
-    if (m_lastDirectionX == Left)
-        m_iX = (m_iX + 1 >= m_iDimensions) ? 0 : (m_iX + 1);
-    else if (m_lastDirectionX == Right)
+    //check axis X according to configured Joystick Orientation. They're 2 directions for axis with 4 orientations for each
+    if ((m_lastDirectionX == EDirection::Left && m_joystickOrientation == EOrientation::Orientation0) ||
+        (m_lastDirectionX == EDirection::Right && m_joystickOrientation == EOrientation::Orientation180) ||
+        (m_lastDirectionY == EDirection::Down && m_joystickOrientation == EOrientation::Orientation270) ||
+        (m_lastDirectionY == EDirection::Up && m_joystickOrientation == EOrientation::Orientation90))
         m_iX = (m_iX - 1 < 0) ? (m_iDimensions - 1) : (m_iX - 1);
+    else if ((m_lastDirectionX == EDirection::Left && m_joystickOrientation == EOrientation::Orientation180) ||
+        (m_lastDirectionX == EDirection::Right && m_joystickOrientation == EOrientation::Orientation0) ||
+        (m_lastDirectionY == EDirection::Down && m_joystickOrientation == EOrientation::Orientation90) ||
+        (m_lastDirectionY == EDirection::Up && m_joystickOrientation == EOrientation::Orientation270))
+        m_iX = (m_iX + 1 >= m_iDimensions) ? 0 : (m_iX + 1);
 
-    //check axis Y
-    if (m_lastDirectionY == Down)
-        m_iY = (m_iY + 1 >= m_iDimensions) ? 0 : (m_iY + 1);
-    else if (m_lastDirectionY == Up)
+    //check axis Y according to configured Joystick Orientation. 
+    if ((m_lastDirectionX == EDirection::Left && m_joystickOrientation == EOrientation::Orientation90) ||
+        (m_lastDirectionX == EDirection::Right && m_joystickOrientation == EOrientation::Orientation270) ||
+        (m_lastDirectionY == EDirection::Down && m_joystickOrientation == EOrientation::Orientation180) ||
+        (m_lastDirectionY == EDirection::Up && m_joystickOrientation == EOrientation::Orientation0))
+        m_iY = (m_iY + 1 >= m_iDimensions) ? 0 : (m_iY + 1);        
+    else if ((m_lastDirectionX == EDirection::Left && m_joystickOrientation == EOrientation::Orientation270) ||
+        (m_lastDirectionX == EDirection::Right && m_joystickOrientation == EOrientation::Orientation90) ||
+        (m_lastDirectionY == EDirection::Down && m_joystickOrientation == EOrientation::Orientation0) ||
+        (m_lastDirectionY == EDirection::Up && m_joystickOrientation == EOrientation::Orientation180))
         m_iY = (m_iY - 1 < 0) ? (m_iDimensions - 1) : (m_iY - 1);
 
     //check axis Z
@@ -111,7 +123,7 @@ void CLedGame::MoveAndCheckLed()
         delay(1000);
         m_leds->AllLedsOnOff(false);
         delay(250);
-        m_GameMode = Simon;
+        m_GameMode = EGameMode::Simon;
         m_iCurrentLevel = 0;
     }
 }
@@ -154,7 +166,7 @@ void CLedGame::SimonLed()
     }
 
     // change current level and change to user mode by blinking all leds
-    m_GameMode = User;
+    m_GameMode = EGameMode::User;
     m_leds->AllLedsOnOff(true);
     delay(1000);
     m_leds->AllLedsOnOff(false);

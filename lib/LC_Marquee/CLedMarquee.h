@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <CLeds.h>
 #include <CCommon.h>
 

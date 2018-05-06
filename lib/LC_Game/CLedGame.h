@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <CLeds.h>
 #include <CJoystick.h>
 #include <CCommon.h>
@@ -9,16 +8,18 @@ const int IN_BUTTON = 2;
 const unsigned long TIME_TO_POWER_DOWN = 60000;     //1 minute
 const int MAX_SIMON_LEVELS = 8;
 
-enum EGameMode { Unknown, Simon, User };
+enum class EGameMode { Unknown, Simon, User };
+enum class EOrientation { Orientation0, Orientation90, Orientation180, Orientation270};
 
 class CLedGame
 {
 public:
     // Constructors
-    CLedGame(int iDimensions, int iPinsXY[], int iPinsZ[])
+    CLedGame(int iDimensions, int iPinsXY[], int iPinsZ[], EOrientation joystickOrientation)
     {
         m_leds = new CLeds(iDimensions, iPinsXY, iPinsZ);
         m_iDimensions = iDimensions;
+        m_joystickOrientation = joystickOrientation;
 
         // set initial led for Simon list
         m_iSimonX = new int[MAX_SIMON_LEVELS];
@@ -31,10 +32,10 @@ public:
         m_iX = 0;
         m_iY = 0;
         m_iZ = 0;
-        m_lastDirectionX = None;
-        m_lastDirectionY = None;
+        m_lastDirectionX = EDirection::None;
+        m_lastDirectionY = EDirection::None;
         m_iCurrentLevel = 0;
-        m_GameMode = Simon;
+        m_GameMode = EGameMode::Simon;
         m_lLastTime = millis();
     };
 
@@ -50,6 +51,7 @@ private:
     // Fields
     CLeds* m_leds;
     int m_iDimensions;
+    EOrientation m_joystickOrientation;
     int* m_iSimonX;
     int* m_iSimonY;
     int* m_iSimonZ;             //list of generated LEDs for Simon game

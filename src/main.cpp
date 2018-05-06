@@ -39,6 +39,7 @@ const int PLANE_Z[4] = { 16, 17, 18, 19 };
 #ifdef GAME
 #include <CLedGame.h>
 
+const EOrientation JOYSTICK_ORIENTATION = EOrientation::Orientation270;
 CLedGame* m_Game;
 
 void setup()
@@ -48,7 +49,7 @@ void setup()
     Serial.begin(9600);
     Serial.println("Debugging LC-Game");
 #endif
-    m_Game = new CLedGame(DIMENSIONS, PLANE_XY, PLANE_Z);
+    m_Game = new CLedGame(DIMENSIONS, PLANE_XY, PLANE_Z, JOYSTICK_ORIENTATION);
 }
 
 void loop()
