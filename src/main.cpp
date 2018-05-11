@@ -88,20 +88,3 @@ void loop()
     Common.Sleep(500);
 }
 #endif
-
-#if defined(LEDS)
-#include <CLeds.h>
-
-CLeds* m_leds;
-
-void setup()
-{
-    m_leds = new CLeds(DIMENSIONS, PLANE_XY, PLANE_Z);
-}
-
-void loop()
-{
-    m_leds->SetLedOnOff(0, 0, 0, true);
-    m_leds->SetLedOnOff(0, 1, 1, true);
-}
-#endif

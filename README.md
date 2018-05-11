@@ -10,10 +10,12 @@ Software project for Arduino Nano to control 3D LED cubes.
 ### Hardware components used for Led Cube
 
 - Arduino [Nano](https://store.arduino.cc/arduino-nano) or compatible
+- Blue 5 mm LED diodes. 64 leds for 4x4x4 cubes and 27 leds for 3x3x3 cubes
+- Resistors 330 ohms. 16 resistors for 4x4x4 cubes and 9 resistors for 3x3x3 cubes
 - Battery or powerbank [ 5V,  +2200 mAh ]
 - Optional joystick analog 2-Axis with button for interactive games
 - Optional dip switch to turn on/off the cube
-- Cube structure, up to your imagination
+- Cube structure, up to your imagination. I followed instructions from [here](https://tutorial.cytron.io/2015/08/17/4x4x4-led-cube-using-arduino-uno-without-extra-ic/)
 
 ### Software structure
 
