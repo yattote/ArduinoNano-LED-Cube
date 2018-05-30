@@ -1,5 +1,6 @@
-#include <CLeds.h>
+#include <TrueRandom.h>
 #include <CCommon.h>
+#include <CLeds.h>
 
 enum ELedMarquee { TestAll, LineVertical, LineHorizontal, LineRandom, Snake, Pattern };
 

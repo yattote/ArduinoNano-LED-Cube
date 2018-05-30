@@ -138,10 +138,11 @@ void CLedGame::SimonLed()
     bool bCorrectLevel = false;
     while (!bCorrectLevel)
     {
-        //TODO: check why the first random() values are the same after reset Arduino. Only works when game is reset by (m_iMaxLevel >= MAX_SIMON_LEVELS)
-        m_iSimonX[m_iMaxLevel] = random(0, m_iDimensions);
-        m_iSimonY[m_iMaxLevel] = random(0, m_iDimensions);
-        m_iSimonZ[m_iMaxLevel] = random(0, m_iDimensions);
+        //why the first random() values are the same after reset Arduino? Only works when game is reset by (m_iMaxLevel >= MAX_SIMON_LEVELS)
+        //-> because native random() is pseudo-random calculated from a formula. Arduino starts at the same point in the sequence every reset
+        m_iSimonX[m_iMaxLevel] = TrueRandom.random(0, m_iDimensions);
+        m_iSimonY[m_iMaxLevel] = TrueRandom.random(0, m_iDimensions);
+        m_iSimonZ[m_iMaxLevel] = TrueRandom.random(0, m_iDimensions);
 
         //loop to make sure current level is different led than previous level
         if (m_iMaxLevel <= 0)
@@ -156,13 +157,13 @@ void CLedGame::SimonLed()
     m_iMaxLevel++;  //increase and adapt Max Level
 
     // show all sequence with previous led and current new led
-    //TODO: increase speed acording to current level
+    int iDelay = max(200, min(1000 / m_iMaxLevel, 1000));   //increase speed acording to current level within [200, 1000]
     for (int i = 0; i < m_iMaxLevel; i++)
     {
         m_leds->SetLedOnOff(m_iSimonX[i], m_iSimonY[i], m_iSimonZ[i], true);
-        delay(500);
+        delay(iDelay);
         m_leds->SetLedOnOff(m_iSimonX[i], m_iSimonY[i], m_iSimonZ[i], false);
-        delay(500);    //after blink, wait for the next led in the sequence
+        delay(iDelay);     //after blink, wait for the next led in the sequence
     }
 
     // change current level and change to user mode by blinking all leds
@@ -175,9 +176,9 @@ void CLedGame::SimonLed()
     // set starting led for player from its last position, which has to be different to the first level led!
     while (m_iSimonX[0] == m_iX && m_iSimonY[0] == m_iY && m_iSimonZ[0] == m_iZ)
     {
-        m_iX = random(0, m_iDimensions);
-        m_iY = random(0, m_iDimensions);
-        m_iZ = random(0, m_iDimensions);
+        m_iX = TrueRandom.random(0, m_iDimensions);
+        m_iY = TrueRandom.random(0, m_iDimensions);
+        m_iZ = TrueRandom.random(0, m_iDimensions);
     }
     m_leds->SetLedOnOff(m_iX, m_iY, m_iZ, true);
     delay(250);

@@ -1,6 +1,7 @@
+#include <TrueRandom.h>
+#include <CCommon.h>
 #include <CLeds.h>
 #include <CJoystick.h>
-#include <CCommon.h>
 
 const int IN_AXIS_X = 17;   //A3
 const int IN_AXIS_Y = 18;   //A4

@@ -2514,13 +2514,13 @@ void CLedMarquee::SetLedMarquee(ELedMarquee marquee)
             for (i = 0; i < m_iDimensions; i++)
             {
                 //NOTE: random goes from 0 to [MAX - 1] values!
-                if (random(2))
+                if (TrueRandom.random(2))
                 {
-                    SetLedsXyPlaneVertical(random(m_iDimensions), random(m_iDimensions), random(2));
+                    SetLedsXyPlaneVertical(TrueRandom.random(m_iDimensions), TrueRandom.random(m_iDimensions), TrueRandom.random(2));
                 }
                 else
                 {
-                    SetLedsLayerHorizontal(random(m_iDimensions), random(m_iDimensions), random(2));
+                    SetLedsLayerHorizontal(TrueRandom.random(m_iDimensions), TrueRandom.random(m_iDimensions), TrueRandom.random(2));
                 }
                 Common.Sleep(m_iSpeed * 2);
             }
@@ -2605,7 +2605,7 @@ void CLedMarquee::SetSnake(int iIterations)
     //start in a random (x, y, z) position
     for (i = 0; i < m_iDimensions; i++)
     {
-        iValues[i] = random(m_iDimensions);
+        iValues[i] = TrueRandom.random(m_iDimensions);
     }
     for (i = 0; i < iIterations; i++)
     {
@@ -2616,8 +2616,8 @@ void CLedMarquee::SetSnake(int iIterations)
         m_leds->SetLedOnOff(iValues[0], iValues[1], iValues[2], false);
 
         // there are 3 dimensions and 2 possible directions per dimension
-        iNextDimension = random(3);
-        CalculateSnakeNextMove(0, iValues, iNextDimension, iNextDimension, random(2));
+        iNextDimension = TrueRandom.random(3);
+        CalculateSnakeNextMove(0, iValues, iNextDimension, iNextDimension, TrueRandom.random(2));
     }
 }
 
